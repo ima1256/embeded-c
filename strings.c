@@ -4,9 +4,11 @@
 #include <stdio.h>
 #include <string.h>
 
+
+
 typedef struct {
 	int value;
-	Node *next;
+	struct Node *next;
 } Node;
 
 typedef struct {
@@ -51,49 +53,93 @@ void leer_escribir() {
 	close(fd);
 }
 
-char **split(char *string, char sep, int *count) {
+//split de python en c
+char **split(const char *string, char sep, int *count) {
 
-	int i = 0, j = 0, tokens = 0;
-	char *start = string;
+	int i = 0, //indice del string
+	z = 0, //indice de array de palabras
+	j = 0, //indice de palabras
+	l = 0, //indice ultimo separador o 0 
+	size = 0; //tamaño de la palabra
 	*count = 0;
 
 	//contamos cuantos separadores hay
-	while(*string) {
-		if (*string == sep) (*count)++;
-		string++;	
+	while(string[i]) {
+		if (string[i] == sep) (*count)++;
+		i++;
 	}
 
-	tokens = (*count) + 1;
-	string = start;
-	char **res = malloc((tokens) * sizeof(char*));
-
+	*count += 1;
+	char **res = malloc((*count) * sizeof(char*));
 	if (!res) return NULL;
 
 	i = 0;
-	int word_size = 0;
-	char *word_start = *string
-	while(*string) {
+	while(string[i] != '\0') {
 
-		if (*string == sep ) {
-			res[i][j] = '\0';
-			i++;
+		if (string[i] == sep ) {
+		
+			//asignate string size
+			size = j + 1;
+			//allocate memory
+			res[z] = malloc(sizeof(char)*size);
+			//asign strings
+			for (int h = 0; h < size - 1; h++) res[z][h] = string[l+h];
+			//assing end of string
+			res[z][j] = '\0';
+			//reiniciar el contador de palabra
 			j = 0;
-			word_size = 0;
-		} else {
-			res[i][j] = *string; 
-			j++;
-			word_size++;
-		}	
-		string++;
+			//aumentar el contador de array de palabras
+			z++;
+			//asignar i como ultimo indice de separador 
+			l = i + 1;
+		} else j++;
+		i++;
 
 	}
 
-	string = start;
-	res[i][j] = '\0';
+	size = j + 1;
+	res[z] = malloc(sizeof(char)*size);
+	for (int h = 0; h < size - 1; h++) res[z][h] = string[l+h];
+	res[z][j] = '\0';
 
 	return res;
 
 }
+
+char *join(char **array, int count, char sep) {
+
+	//pasamos por el array para calcular el tamaño de cada palabra
+	int i = 0, j = 0, size = 0, k = 0;
+	while(i < count) {
+		while(array[i][j++] != '\0') size++;
+		i++; j=0;
+	}
+
+	size += (count - 1) + 1; //size es size + los separadores + el caracter nulo
+
+	char *result = malloc(sizeof(char)*size);
+
+	i = 0; j = 0;
+	while( i < count ) {
+
+		while(array[i][j] != '\0') {
+			result[k] = array[i][j];
+			j++;
+			k++;
+		}
+
+		if (i < count - 1) result[k] = sep;
+		i++;
+		j = 0;
+		k++;
+	}
+
+	result[k] = '\0';
+
+	return result;
+
+}
+
 
 void liberar_memoria(char **array, int size) {
 
@@ -105,18 +151,43 @@ void liberar_memoria(char **array, int size) {
 
 }
 
+//asks a string and executes a function until you type quit
+void ask_execute() {
+
+	int salir = 0;
+	char s[256];
+	int count = 0;
+	char **string_array;
+
+	while(1) {
+		
+		printf("Escribe algo\n");
+		fgets(s, 256, stdin);
+		if (strcmp(s, "quit\n") == 0) break;
+
+		string_array = split(s, ' ', &count);
+		printf("%d\n", count);
+		for (int i = 0; i < count; i++) printf("%s\n", string_array[i]);
+
+		liberar_memoria(string_array, count);
+	}
+
+}
+
+#define SIZE 4
+
 //leer y escribir solo con llamadas al sistema
 int main(int argc, char *argv[]) {
 
-	int count = 0;
+	//ask_execute();
+	printf("");
+	printf("\0");
 
-	char **string_array = split("hola que tal", ' ', &count);
+	char *array[SIZE] = {"hola", "que", "tal", "adios"};
+	char *res = join(array, SIZE, '-');
+	printf("%s", res);
 
-	printf("%d", count);
-
-	printf("%s", string_array[0]);
-
-	liberar_memoria(string_array, count);
+	free(res);
 
 	return 0;
 
