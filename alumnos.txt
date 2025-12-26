@@ -1,0 +1,15 @@
+1 Paco 7.50
+2 Ana 8.20
+3 Luis 6.75
+4 Maria 9.10
+5 Carlos 5.40
+6 Elena 8.95
+7 Pedro 6.00
+8 Lucia 7.80
+9 Diego 4.90
+10 Sofia 9.25
+11 Javier 5.75
+12 Laura 8.40
+13 Raul 6.30
+14 Carmen 7.10
+15 Alberto 9.00

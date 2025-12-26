@@ -1,202 +1,189 @@
-#include <string.h>
 #include <stdio.h>
-#include <unistd.h>
-
-#define MAX_ITEMS 100
-#define MAX_KEY_LEN 50
+#include <stdlib.h>
 
 typedef struct {
-	char key[MAX_KEY_LEN];
-	int value;
-} Item;
+    int id; 
+    float temperature;
+} Sensor;
 
-typedef struct {
-	Item items[MAX_ITEMS];
-	int size;
-} Dict;
+void add_one(int *value);
 
-void set(Dict *dict, char *key, int value) {
+void ask_numbers();
 
-	if (*dict.size == MAX_ITEMS) return;
+void swap(int *a, int *b);
 
-	
+void set_to_zero(int *p);
 
-}
+int sum_array(int *arr, int length) {
 
-char *my_strcpy(char *dest, const char *src) {
+    int total = 0;
 
-	char *start = dest;
+    for ( int i = 0; i < length; i++) {
+        total += *arr;
+        arr++;
+    }
 
-	while(*src) {
-
-		*dest = *src;
-		dest++;
-		src++;
-	}
-
-	*dest = '\0';
-
-	return start;
+    return total;
 
 }
 
-char *my_strcat(const char *s1, const char *s2) {
+int max_value(int *arr, int length) {
 
-	char *s3;
+    int max = *arr;
+    int i = 0;
 
-	char *start = s3;
+    do {
+        arr++;
+        i++;
+        if ( *arr > max) max = *arr;
+    } while ( i < length);
 
-	while(*s1) {
-		*s3 = *s1;
-		s1++;
-		s3++;
-	}
-
-	while(*s2) {
-		*s3 = *s2;
-		s2++;
-		s3++;
-	}
-
-	*s3 = '\0';
-
-	return start;
+    return max;
 
 }
 
-int STD_OUT = 1;
+void double_all(int *arr, int length) {
 
-int str_len(const char *s) {
-
-	int len = 0; 
-
-	while(*s) {
-		s++;
-		len++;
-	}
-
-	return len;
+    for ( int i = 0; i < length; i++) {
+        *arr *= 2;
+        arr++;
+    }
 
 }
 
-void leer_escribir() {
+void set_to_zero(int *p) {
 
-	char buf[100];
-	int n = read(0, buf, 100);
-	write(1, buf, n);
+    *p = 0;
 
 }
 
-void pruebas() {
-	int x = 0x250;
+void swap(int *a, int *b) {
 
-	char dest[20] = "hola";
-	char src[] = "holdfadfa"; 
-
-	printf("%d", str_len("hola"));
-
-	write(STD_OUT, src, 5);
-
-	write(STD_OUT, "\n", 1);
-
-	printf("%zu\n", strlen(src));
-
-	my_strcpy(dest, src);
-
-	char *res = my_strcat(dest, src);
-	char *c = strchr("destsdf", 'f');
-
-	c++;
-
-	printf("%d", *c == '\0');
+    int temp = *a;
+    *a = *b;
+    *b = temp;
 }
 
-void leer_escribir_torcido() {
 
-	char buf[255];
-	char w_buf[255];
+void ask_numbers() {
 
-	int n = read(0, buf, 255);
-	int i = 0, j = 0, w_pos = 0;
+    int num_elems = 5;
 
-	while(i < n) {
+    int elems[num_elems];
 
-		if ( buf[i] == ' ' || buf[i] == '\n') {
-			w_buf[w_pos++] = buf[i++];
-		} else {
+    int max, min, sum = 0;
 
-			j = i;
+    for ( int i = 0; i < num_elems; i++) {
 
-			while ( j < n && buf[j] != ' ' && buf[j] != '\n') j++;
+        printf("Introduce el digito numero %i\n", i + 1);
+        scanf("%d", &elems[i]);
 
-			for ( int t = j - 1; t >= i; t--) {
-				w_buf[w_pos++] = buf[t];
-			}
+        if ( i == 0) {
 
-			i=j;
-		}
-		
-	}
+            max = elems[i];
+            min = elems[i];
 
-	write(1, w_buf, n);
+        } else {
+
+            if ( elems[i] > max) max = elems[i];
+
+            if ( elems[i] < min) min = elems[i];
+
+        }
+
+        sum += elems[i];
+
+    }
+
+    printf("max = %d, min = %d, sum = %d", max, min, sum);
 
 }
 
-void contar_vocales() {
+void add_one(int *value) {
 
-	char buf[255];
-	int n = read(0, buf, 255);
-	int i = 0;
-
-	int vocales[5] = {0};
-
-	while(i < n) {
-
-	    if (buf[i] == 'a' || buf[i] == 'A') {
-	        vocales[0]++;
-	    } 
-	    else if (buf[i] == 'e' || buf[i] == 'E') {
-	        vocales[1]++;
-	    } 
-	    else if (buf[i] == 'i' || buf[i] == 'I') {
-	        vocales[2]++;
-	    } 
-	    else if (buf[i] == 'o' || buf[i] == 'O') {
-	        vocales[3]++;
-	    } 
-	    else if (buf[i] == 'u' || buf[i] == 'U') {
-	        vocales[4]++;
-	    }
-
-		i++;
-
-	}
-
-	i = 0;
-
-	while (1) {
-
-	}
-
+    *value += 1;
 
 }
 
-typedef struct {
-	int id;
-	int age;
-	char c;
-} Persona;
+int my_strlen(const char *s) {
+
+    int length = 0;
+
+    while ( *s != '\0') {
+        s++;
+        length += 1;
+    }
+
+    return length;
+
+}
+
+void my_strcopy(char *dest, const char *src) {
+
+    while ( *src != '\0') {
+        *dest = *src;
+        src++;
+        dest++;
+    }
+
+    *dest = '\0';
+
+}
+
+void reverse(int *arr, int length);
+
+void reverse(int *arr, int length) {
+
+    int *first = arr;
+
+    for (int i = 0; i < length - 1; i++) arr++;
+
+    int *last = arr; 
+
+    printf("first = %d, last = %d", *first, *last);
+
+}
 
 int main() {
 
-	int vocales[5] = {0};
+    int num = 5, a = 0, b = 1;
 
-	printf("%d", vocales[3]);
+    add_one(&num);
 
-	return 0;
+    printf("%d\n", num);
 
-	while(1) {
-		leer_escribir_torcido();
-	}
+    swap(&a, &b);
 
+    set_to_zero(&num);
+
+    int array[3] = { 2, 3, 4};
+
+    int total = sum_array(array, 3); 
+    int max = max_value(array, 3);
+
+    double_all(array, 3);
+
+    printf("a = %d, b = %d, num = %d, total = %d, max = %d \n array * 2 = ", a, b, num, total, max);
+
+    for ( int i = 0; i < 3; i++) {
+        printf("%d ", array[i]);
+    }
+
+    printf("\n Longitud: ");
+
+    int length = my_strlen("hola adios ");
+
+    printf("%d \n", length);
+
+    char *copy = malloc(100);
+
+    my_strcopy(copy, "hola buenos dias");
+
+    printf("%s", copy);
+
+    free(copy);
+
+    reverse(array, 3);
+
+    return 0;
 }
