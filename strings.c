@@ -4,41 +4,6 @@
 #include <stdio.h>
 #include <string.h>
 
-
-
-typedef struct {
-	int value;
-	struct Node *next;
-} Node;
-
-typedef struct {
-	int num_elems;
-	Node *first;
-	Node *last;
-} LinkedList;
-
-void addNode(LinkedList *list, int value) {
-
-	list->last = malloc(sizeof(Node));
-	list->last->next = NULL;
-	list->last->value = value;
-
-	if (list->num_elems == 0) {
-		list->first = list->last; 
-	}
-
-}
-
-LinkedList *create_list(void) {
-
-	LinkedList *list = malloc(sizeof(Node));
-	list->first = NULL;
-	list->last = NULL;
-	list->num_elems = 0;
-	return list;
-
-}
-
 void leer_escribir() {
 	int fd = open("alumnos.txt", O_RDONLY);
 
@@ -106,6 +71,76 @@ char **split(const char *string, char sep, int *count) {
 
 }
 
+//si hay partes del string que estan entre comillas dobles no le afecta el separador
+char **split_quoted(const char *string, char sep, int *count) { 
+
+	int i = 0, //indice del string
+	z = 0, //indice de array de palabras
+	j = 0, //indice de palabras
+	l = 0, //indice ultimo separador o 0 
+	size = 0; //tamaño de la palabra
+	*count = 0;
+
+	//definimos un array en el que decimos 
+	//donde empiezan las areas de dobles comillas
+	int numero_areas = 0;
+	int *area_start;
+	int posible_area = 0;
+
+	//contamos cuantos separadores hay
+	while(string[i]) {
+
+		//tratamos el caso en el que nos encontramos dobles comillas
+		if (string[i] == '\"' && !posible_area) {
+			posible_area = 1;
+		} else if (string[i] == '\"' && posible_area) {
+			numero_areas += 1;
+			posible_area = 0;
+		}
+
+		if (string[i] == sep) (*count)++;
+		i++;
+	}
+
+	*count += 1;
+	char **res = malloc((*count) * sizeof(char*));
+	if (!res) return NULL;
+
+	i = 0;
+	while(string[i] != '\0') {
+
+		//tratamos el caso en el que las dobles comillas aplican
+
+		if (string[i] == sep ) {
+		
+			//asignate string size
+			size = j + 1;
+			//allocate memory
+			res[z] = malloc(sizeof(char)*size);
+			//asign strings
+			for (int h = 0; h < size - 1; h++) res[z][h] = string[l+h];
+			//assing end of string
+			res[z][j] = '\0';
+			//reiniciar el contador de palabra
+			j = 0;
+			//aumentar el contador de array de palabras
+			z++;
+			//asignar i como ultimo indice de separador 
+			l = i + 1;
+		} else j++;
+		i++;
+
+	}
+
+	size = j + 1;
+	res[z] = malloc(sizeof(char)*size);
+	for (int h = 0; h < size - 1; h++) res[z][h] = string[l+h];
+	res[z][j] = '\0';
+
+	return res;
+
+}
+
 char *join(char **array, int count, char sep) {
 
 	//pasamos por el array para calcular el tamaño de cada palabra
@@ -128,10 +163,12 @@ char *join(char **array, int count, char sep) {
 			k++;
 		}
 
-		if (i < count - 1) result[k] = sep;
+		if (i < count - 1) {
+			result[k] = sep;
+			k++;
+		} 
 		i++;
 		j = 0;
-		k++;
 	}
 
 	result[k] = '\0';
@@ -174,17 +211,31 @@ void ask_execute() {
 
 }
 
+float calculate_mean(const int *v, size_t size) {
+
+	float result = 0.0;
+
+	for (int i = 0; i < size; i++) {
+		result += (float) v[i];
+	}
+
+	return result / (float) size;
+
+}
+
 #define SIZE 4
+#define SIZE_INT 3
 
 //leer y escribir solo con llamadas al sistema
 int main(int argc, char *argv[]) {
 
-	//ask_execute();
-	printf("");
-	printf("\0");
+	int v[4] = { 1, 2, 3, 4};
+
+	float mean = calculate_mean(v, 4);
+	printf("%.2f\n", mean);
 
 	char *array[SIZE] = {"hola", "que", "tal", "adios"};
-	char *res = join(array, SIZE, '-');
+	char *res = join(array, SIZE, '*');
 	printf("%s", res);
 
 	free(res);

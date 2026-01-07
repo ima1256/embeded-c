@@ -176,10 +176,6 @@ int main() {
 
 	if (res) return 1;
 
-	//Buscamos un alumno por id
-
-
-
 	return 0;
 
 }
